@@ -1,25 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
     <div id="mainpage">
-        <div id="info">
-            <p id="firstImpression"></p>
-            <p id="lookOutput"></p>
-            <p id="actionText"></p>
-            <p id="enemyText"></p>
-            <p id="playerText"></p>
+        <div id="statusDiv">
+            <div class="titleDiv">
+                <h2>Status</h2>
+            </div>
+            <div id="playerStatus"></div>
         </div>
-        <div>
-            <input type="text" id="skrivefelt">
-            <button type="button" id="knapp">Enter</button>    
+        <div id="middleDiv">
+            <div class="titleDiv">
+                <h1 id="gameTitle">'placeholder'</h1>
+            </div>
+            <div id="info">
+                <p id="firstImpression"></p>
+            </div>
+            <div id="input">
+                <input type="text" id="textField">
+                <button type="button" id="actionButton">Enter</button>
+            </div>
+        </div>
+        <div id="objectiveDiv">
+            <div id="objectives"></div>
         </div>
     </div>
     <script src="script.js"></script>
 </body>
+
 </html>

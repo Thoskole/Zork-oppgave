@@ -3,3 +3,75 @@ body
     margin: 0;
     padding: 0;
 }
+
+#mainpage
+{
+    display: flex;
+    flex-direction: row;
+}
+
+#statusDiv
+{
+    width: 20%;
+    height: 100vh;
+    margin-right: 5%;
+    padding-left: 2vh;
+    padding-right: 2vh;
+    border-right-style: solid;
+    text-align: center;
+}
+
+#middleDiv
+{
+    width: 50%;
+
+}
+
+.titleDiv
+{
+    width: 50%;
+    height: 7vh;
+    border-bottom-style: solid;
+    margin-bottom: 5vh;
+    align-self: center;
+    justify-self: center;
+    text-align: center;
+}
+
+#info
+{
+    width: 100%;
+    height: 50vh;
+    border-style: solid;
+    padding-right: 2vh;
+    padding-left: 2vh;
+    overflow-y: scroll;
+}
+
+#input
+{
+    margin-top: 2vh;
+    width: 100%;
+}
+
+#objectiveDiv
+{
+    width: 20%;
+    height: 100vh;
+    margin-left: 5%;
+    border-left-style: solid;
+    overflow-y: scroll;
+}
+
+.objective
+{
+    justify-self: center;
+    width: 80%;
+    padding-right: 1vh;
+    padding-left: 1vh;
+    border-bottom-style: dashed;
+}
+.objectiveText
+{
+    font-weight: normal;
+}
