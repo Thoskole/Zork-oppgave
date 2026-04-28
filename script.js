@@ -441,6 +441,7 @@ function equip() {
                                 items[i].itemEquipped = 1;
                                 player.attackLow = player.attackLow + items[i].itemValue;
                                 player.attackHigh = player.attackHigh + items[i].itemValue;
+                                break;
                             }
                             else { }
                         }
@@ -450,6 +451,7 @@ function equip() {
                         items[i].itemEquipped = 1;
                         player.attackLow = player.attackLow + items[i].itemValue;
                         player.attackHigh = player.attackHigh + items[i].itemValue;
+                        break;
                     }
                 }
                 else if (items[i].itemType === "armor") {
@@ -460,6 +462,7 @@ function equip() {
                                 player.defense = player.defense - items[o].itemValue;
                                 items[i].itemEquipped = 1;
                                 player.defense = player.defense + items[i].itemValue;
+                                break;
                             }
                             else { }
                         }
@@ -468,19 +471,21 @@ function equip() {
                         player.armorEquipped = items[i].itemName;
                         items[i].itemEquipped = 1;
                         player.defense = player.defense + items[i].itemValue;
+                        break;
                     }
                 }
+
             }
-        }
-        else if (items[i].itemEquipped === 1) {
-            output = "<p>" + items[i].itemName + " is already equipped.</p>";
-            info.insertAdjacentHTML("beforeend", output);
-            break;
-        }
-        else {
-            output = "<p>" + items[i].itemName + " can not be equipped.</p>";
-            info.insertAdjacentHTML("beforeend", output);
-            break;
+            else if (items[i].itemEquipped === 1) {
+                output = "<p>" + items[i].itemName + " is already equipped.</p>";
+                info.insertAdjacentHTML("beforeend", output);
+                break;
+            }
+            else {
+                output = "<p>" + items[i].itemName + " can not be equipped.</p>";
+                info.insertAdjacentHTML("beforeend", output);
+                break;
+            }
         }
     }
     printStatus();
