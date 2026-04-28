@@ -31,9 +31,9 @@ areas[5] = new area("main highway beginning", "main highway middle", "guard chec
 areas[6] = new area("main highway middle", "main highway end", "main highway beginning", "blocked", "blocked", "After hours of walking theres finally a landmark. A roadblock has been built here with a sign facing north, it looks newly built but there are no guards.");
 areas[7] = new area("main highway end", "placeholder town south entrance", "main highway middle", "blocked", "blocked", "You can see placeholder town to the north, to the south is the long walk back to your destroyed hometown.");
 areas[8] = new area("placeholder town south entrance", "placeholder town main square", "main highway end", "blocked", "placeholder inn lobby", "The guards let you through the gate without any problems, it doesn't seem like they know what happened to the south yet. There are many buildings on both sides of the road but one stands out; a large two story building with the word 'INN' on the front door. To the north and further into town is what looks like a large open plaza.");
-areas[9] = new area("placeholder town main square", "placeholder town north entrance", "placeholder town south entrance", "placeholder town east entrance", "placeholder town west entrance", "placeholder description");
-areas[10] = new area("placeholder town north entrance", "north road", "placeholder town main square", "blocked", "blocked", "placeholder description");
-areas[11] = new area("placeholder town east entrance", "placeholder general store", "blocked", "east road", "placeholder town main square", "placeholder description");
+areas[9] = new area("placeholder town main square", "placeholder town north entrance", "placeholder town south entrance", "placeholder town east entrance", "placeholder town west entrance", "The middle of town consists of a large open area with stalls around the edges. From here you can go north, east, south or west.");
+areas[10] = new area("placeholder town north entrance", "north road", "placeholder town main square", "blocked", "blocked", "The northern part of town contains mostly what seems to be barracks and training fields for the guard. Past the gate to the north, a large mountain looms in the distance. To the south is the middle of town.");
+areas[11] = new area("placeholder town east entrance", "placeholder general store", "blocked", "east road", "placeholder town main square", "The east of placeholder town has mostly storefronts and restaurants. East past the gates, the road continues through vast plains until it reaches the sea. You notice a general store to the north, there's a sign out front. To the west is the town center.");
 areas[12] = new area("placeholder town west entrance", "blocked", "blocked", "placeholder town main square", "west road", "placeholder description");
 areas[13] = new area("placeholder inn lobby", "blocked", "placeholder inn bedroom(closed)", "placeholder town south entrance", "blocked", "The inside of the inn has a cozy vibe, behind the counter is an older woman who smiles at you as you walk in. Only one table is occupied, a man is sitting in the far corner drinking, he looks like he is in a bad mood. To the south are a set of stairs leading to the second floor.");
 areas[14] = new area("placeholder inn bedroom", "placeholder inn lobby", "blocked", "blocked", "blocked", "placeholder description");
@@ -41,6 +41,7 @@ areas[15] = new area("placeholder general store", "blocked", "placeholder town e
 
 signs[1] = "North: guard checkpoint. East: training field. South: road to Greenwood town.";
 signs[6] = "Travel to Greenwood town is being temporarily halted for road repairs, it should open again by the end of the week.";
+signs[11] = "Placeholder general store, the place where you can find anything and everything."
 
 items[0] = new item("training sword", 3, "weapon", "A blunt sword used by knights for practice, still hurts if it hits.", 0, 0, "storage shed");
 items[1] = new item("placeholder inn bedroom key", "You have to talk to the woman behind the counter to book a room", "key", "The key to your room in the placeholder inn", 0, "unequippable", "placeholder inn bedroom");
@@ -55,7 +56,7 @@ npcs[0] = new npc("woman", "Hello and welcome to placeholder town inn, is there 
 npcs[1] = new npc("man", "What do you want?", "1. I heard you tried to get to Greenwood, what happened? 2. Nothing sorry.", "placeholder inn lobby", "inn patron");
 npcs[2] = new npc("old man", "Welcome esteemed customer, can I interest you in any of my wares?", "1. Buy Wooden bow - eight gold. 2. Buy Lantern - six gold. 3. Buy Red ring - nine gold. 4. Buy Red potion - two gold. 5. I am here to pick up the grocery order for placeholder inn.(hidden Help the innkeeper) 6. Not right now, thanks.", "placeholder general store", "the store owner");
 
-responses[0] = new response("the innkeeper 1", "I might be able to help you, go to the general store and pick up my groceries. When you get back i can lend you a room.", "none", "Help the innkeeper", "none", 0);
+responses[0] = new response("the innkeeper 1", "I might be able to help you, go to the general store and pick up my groceries. When you get back i'll lend you a room.", "none", "Help the innkeeper", "none", 0);
 responses[1] = new response("the innkeeper 2", "That man in the corner has been staying at the inn for a couple of days waiting for the road to open, try asking him", "none", "none", "none", 0);
 responses[2] = new response("inn patron 1", "Those bastards were blocking the road, said I had to wait a week for the road to be repaired. Don't know what the king's personal guards are doing fixing roads but what do I know. When I got back here this weird lady asked me to meet her in the camp west of the city but I didn't want any trouble so I haven't gone yet.", "none", "Main quest", "Talk to the lady in the camp west of placeholder town", 0)
 
@@ -349,6 +350,8 @@ function respond() {
         if (responses[i].responseName.search(npcs[currentTalk].npcDescriptor) != -1 && responses[i].responseName.search(text) != -1) {
             output = "<p>" + responses[i].responseContent + "</p>";
             info.insertAdjacentHTML("beforeend", output);
+            inTalk = "false"
+            currentTalk = "none"
         }
         else {
             inTalk = "false";
