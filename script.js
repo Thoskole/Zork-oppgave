@@ -1,3 +1,4 @@
+//various variables for use later
 let areas = [];
 let signs = [];
 let items = [];
@@ -11,7 +12,7 @@ let inTalk = "false";
 let currentEnemy;
 let currentTalk;
 let output;
-
+//the player, pretty obvious what everything does
 const player = {
     health: 30,
     maxHealth: 30,
@@ -20,8 +21,9 @@ const player = {
     defense: 0,
     weaponEquipped: "none",
     armorEquipped: "none",
+    gold: 0,
 }
-
+//areas contain current area name and area names of areas in all directions + area description
 areas[0] = new area("forest road", "road split", "city gate", "blocked", "blocked", "You are on a dirt road in the middle of a forest. Far behind you to the south is your former hometown, looted and burned to the ground.");
 areas[1] = new area("road split", "guard checkpoint", "forest road", "training field", "blocked", "There is a fork in the road here, a sign stands at the intersection.");
 areas[2] = new area("training field", "storage shed", "blocked", "blocked", "road split", "An abandoned training field, targets and training dummies litter the field. A small shed stands to the north.");
@@ -38,29 +40,45 @@ areas[12] = new area("placeholder town west entrance", "blocked", "blocked", "pl
 areas[13] = new area("placeholder inn lobby", "blocked", "placeholder inn bedroom(closed)", "placeholder town south entrance", "blocked", "The inside of the inn has a cozy vibe, behind the counter is an older woman who smiles at you as you walk in. Only one table is occupied, a man is sitting in the far corner drinking, he looks like he is in a bad mood. To the south are a set of stairs leading to the second floor.");
 areas[14] = new area("placeholder inn bedroom", "placeholder inn lobby", "blocked", "blocked", "blocked", "placeholder description");
 areas[15] = new area("placeholder general store", "blocked", "placeholder town east entrance", "blocked", "blocked", "The store is filled with shelves packed full with anything from food to weapons, at the back is a counter with an old man behind it. This store might have things you need in your travels.");
-
+//signs only contain text thats printed if you look at them, there are gaps in the array 
+// because the function uses the same number from currentArea to find them
 signs[1] = "North: guard checkpoint. East: training field. South: road to Greenwood town.";
 signs[6] = "Travel to Greenwood town is being temporarily halted for road repairs, it should open again by the end of the week.";
 signs[11] = "Placeholder general store, the place where you can find anything and everything."
-
+//items contain name, a value used for different things depending on item, identifier for
+//type of item, description, value that decides if the item is in your inventory, 
+// value that decides if item is equipped, and associated area
 items[0] = new item("training sword", 3, "weapon", "A blunt sword used by knights for practice, still hurts if it hits.", 0, 0, "storage shed");
 items[1] = new item("placeholder inn bedroom key", "You have to talk to the woman behind the counter to book a room", "key", "The key to your room in the placeholder inn", 0, "unequippable", "placeholder inn bedroom");
-
+//currently only one enemy in game, they contain name, area, attack, health, 
+// drop if any(not implemented yet), and text to update areatext when defeated
 enemies[0] = new enemy("wolf", "guard checkpoint", 3, 10, "none", "wolf pelt", "The checkpoint is abandoned, the wooden gate has been smashed to pieces and there is a dead wolf in the corner next to a half eaten human corpse.");
-
+//quests contain objectives, description and name as well as associated area and status 
+//which decides whether the quest is visible or not
 quests[0] = new quest("Main quest", "story start", "???", "Go north to the next town and search for clues", 0 , "Find out why your hometown was destroyed");
-quests[1] = new quest("Help the innkeeper", "placeholder town innkeeper", "A room at the inn", "Help the innkeeper", 0, "Help the innkeeper pick up her order");
-quests[2] = new quest("Return to the innkeeper", "placeholder general store", "A room at the inn", "Return to the innkeeper", 0, "Help the innkeeper pick up her order");
-
-npcs[0] = new npc("woman", "Hello and welcome to placeholder town inn, is there anything I can help you with?", "1. I need somewhere to rest but i'm broke, could i do any work for you in exchange for a room? 2. Have you seen anybody come through here, either to or from Greenwood town? 3. No sorry to bother you.", "placeholder inn lobby", "the innkeeper");
+quests[1] = new quest("Help the innkeeper", "placeholder town innkeeper", "A room at the inn", "Find the general store and talk to the owner", 0, "Help the innkeeper pick up her order");
+quests[2] = new quest("Return to the innkeeper", "placeholder general store", "A room at the inn", "Give the innkeeper her order", 0, "Help the innkeeper pick up her order");
+//npcs contain name, dialogue associated area and a unique descriptor for use to 
+// associate responses to npcs
+npcs[0] = new npc("woman", "Hello and welcome to placeholder town inn, is there anything I can help you with?", "1. I need somewhere to rest but i'm broke, could i do any work for you in exchange for a room? hiddenreverse Help the innkeeper 2. I am back with your groceries hidden Return to the innkeeper 3. Have you seen anybody come through here, either to or from Greenwood town? 4. No sorry to bother you.", "placeholder inn lobby", "the innkeeper");
 npcs[1] = new npc("man", "What do you want?", "1. I heard you tried to get to Greenwood, what happened? 2. Nothing sorry.", "placeholder inn lobby", "inn patron");
-npcs[2] = new npc("old man", "Welcome esteemed customer, can I interest you in any of my wares?", "1. Buy Wooden bow - eight gold. 2. Buy Lantern - six gold. 3. Buy Red ring - nine gold. 4. Buy Red potion - two gold. 5. I am here to pick up the grocery order for placeholder inn.(hidden Help the innkeeper) 6. Not right now, thanks.", "placeholder general store", "the store owner");
-
+npcs[2] = new npc("old man", "Welcome esteemed customer, can I interest you in any of my wares?", "1. Buy Wooden bow - eight gold. 2. Buy Lantern - six gold. 3. Buy Red ring - nine gold. 4. Buy Red potion - two gold. 5. I am here to pick up the grocery order for placeholder inn. hidden Help the innkeeper 6. Not right now, thanks.", "placeholder general store", "the store owner");
+//npc responses to player input during conversations, can update quests, give items and 
+// take payment
 responses[0] = new response("the innkeeper 1", "I might be able to help you, go to the general store and pick up my groceries. When you get back i'll lend you a room.", "none", "Help the innkeeper", "none", 0);
-responses[1] = new response("the innkeeper 2", "That man in the corner has been staying at the inn for a couple of days waiting for the road to open, try asking him", "none", "none", "none", 0);
-responses[2] = new response("inn patron 1", "Those bastards were blocking the road, said I had to wait a week for the road to be repaired. Don't know what the king's personal guards are doing fixing roads but what do I know. When I got back here this weird lady asked me to meet her in the camp west of the city but I didn't want any trouble so I haven't gone yet.", "none", "Main quest", "Talk to the lady in the camp west of placeholder town", 0)
+responses[1] = new response("the innkeeper 2", "Thank you for the help dear. I've prepared a room for you upstairs, here's the key.", "Return to the innkeeper", "none", "placeholder inn bedroom key", 0)
+responses[2] = new response("the innkeeper 3", "That man in the corner has been staying at the inn for a couple of days waiting for the road to open, try asking him", "none", "none", "none", 0);
+responses[3] = new response("the innkeeper 4", "That's okay, talk to me if you need anything", "none", "none", "none", 0);
+responses[4] = new response("inn patron 1", "Those bastards were blocking the road, said I had to wait a week for the road to be repaired. Don't know what the king's personal guards are doing fixing roads but what do I know. When I got back here this weird lady asked me to meet her in the camp west of the city but I didn't want any trouble so I haven't gone yet.", "none", "Main quest", "Talk to the lady in the camp west of placeholder town", 0)
+responses[5] = new response("inn patron 2", "Then leave me alone", "none", "none", "none", 0)
+responses[6] = new response("the store owner 1", "Thank you for your patronage", "none", "none", "Wooden bow", 8)
+responses[7] = new response("the store owner 2", "Thank you for your patronage", "none", "none", "Lantern", 6)
+responses[8] = new response("the store owner 3", "Thank you for your patronage", "none", "none", "Red ring", 9)
+responses[9] = new response("the store owner 4", "Thank you for your patronage", "none", "none", "Red potion", 2)
+responses[10] = new response("the store owner 5", "How nice of you to help that kind young lady, say hello to her for me", "Help the innkeeper", "Return to the innkeeper", "none", 0)
+responses[11] = new response("the store owner 6", "Just browsing? Talk to me again if you want to buy anything", "none", "none", "none", 0)
 
-
+//various object constructors
 function item(name, value, type, description, inventory, equipped, place) {
     this.itemName = name;
     this.itemValue = value;
@@ -115,7 +133,7 @@ function response(name, content, questComplete, questGet, item, cost) {
     this.responseItem = item;
     this.responseCost = cost;
 }
-
+//this starts the game on page load by printing various status text and the intro text
 document.addEventListener("DOMContentLoaded", () => {
     let areaText = document.getElementById("firstImpression");
     areaText.textContent = areas[currentArea].areaDescription;
@@ -128,7 +146,8 @@ document.addEventListener("DOMContentLoaded", () => {
     printStatus();
     printObjective();
 })
-
+//move checks if the area you are going to is blocked or not and then checks if the direction
+//you are trying to go has an area associated with it
 function move() {
     let text = document.getElementById("textField").value;
     if (text === "n" && areas[currentArea].areaNorth != "blocked") {
@@ -196,12 +215,12 @@ function move() {
         info.insertAdjacentHTML("beforeend", output);
     }
 }
-
+//keyCheck checks if you have a key to a door and lets you through if you do
 function keyCheck() {
     for (i = 0; i < items.length; i++) {
         if (areas[currentArea].areaNorth.search(items[i].itemArea) != -1 && items[i].itemType === "key") {
             if (items[i].itemInventory === 1) {
-                output = "<p>You use the " + items[i].itemName + "to unlock the door.</p>";
+                output = "<p>You use the " + items[i].itemName + " to unlock the door.</p>";
                 info.insertAdjacentHTML("beforeend", output);
                 for (o = 0; o < areas.length; o++) {
                     if (areas[currentArea].areaNorth.search(areas[o].areaName) != -1) {
@@ -273,13 +292,13 @@ function keyCheck() {
         }
     }
 }
-
+//changeArea is here so i didn's have to write the same lines eight times
 function changeArea() {
     info.removeChild(document.getElementById("firstImpression"));
     output = '<p id="firstImpression">' + areas[currentArea].areaDescription + "</p>";
     info.insertAdjacentHTML("beforeend", output);
 }
-
+//Look function currently only works for signs and items, don't have time to write more inspect text for now
 function look() {
     let text = document.getElementById("textField").value;
     if (text.endsWith("sign") && areas[currentArea].areaDescription.search("sign") != -1) {
@@ -296,12 +315,13 @@ function look() {
         }
     }
 }
-
+//The talk function prints npc dialogue and hides hidden options unless conditions 
+//are met also sets inTalk to true restricting certain actions
 function talk() {
     let text = document.getElementById("textField").value;
     text = text.substring(5);
     for (i = 0; i < npcs.length; i++) {
-        if (text === npcs[i].npcName && areas[currentArea].areaDescription.search(npcs[i].npcName) != -1 && npcs[i].npcArea === areas[currentArea].areaName) {
+        if (text === npcs[i].npcName && areas[currentArea].areaDescription.search(npcs[i].npcName) !== -1 && npcs[i].npcArea === areas[currentArea].areaName) {
             inTalk = "true";
             currentTalk = i;
 
@@ -309,28 +329,40 @@ function talk() {
                    + "<p>" + npcs[currentTalk].npcTalk + "</p>";
             info.insertAdjacentHTML("beforeend", output);
             let n = 1;
-            for (o = 1; npcs[currentTalk].npcResponse.search(o) != -1; o++) {
-                if (npcs[currentTalk].npcResponse.search(o) != -1 && npcs[currentTalk].npcResponse.search(o + 1) != -1) {
-                    //console.log("test search output");
+            for (o = 1; npcs[currentTalk].npcResponse.search(o) !== -1; o++) {
+                if (npcs[currentTalk].npcResponse.search(o) !== -1 && npcs[currentTalk].npcResponse.search(o + 1) !== -1) {
                     let start = npcs[currentTalk].npcResponse.search(o);
                     let end = npcs[currentTalk].npcResponse.search(o + 1);
-                    output = "<p>" + (n) + npcs[currentTalk].npcResponse.substring(start + 1, end) + "</p>";
-                    if (output.search("hidden") != -1) {
+                    output = (n) + npcs[currentTalk].npcResponse.substring(start + 1, end);
+                    if (output.search("hidden") !== -1 && output.search("reverse") !== -1) {
                         for (q = 0; q < quests.length; q++) {
-                            if (output.search(quests[q].questName) != -1 && quests[q].questStatus === 1) {
-                                let end = npcs[currentTalk].npcResponse.search("(");
-                                output = "<p>" + (n) + npcs[currentTalk].npcResponse.substring(start + 1, end) + "</p>";
+                            if (output.search(quests[q].questName) !== -1 && quests[q].questStatus === 0) {
+                                end = output.search("hidden");
+                                output = "<p>" + output.substring(0, end) + "</p>";
                                 info.insertAdjacentHTML("beforeend", output);
+                                n++;
+                            }
+                            else {}
+                        }
+                    }
+                    else if (output.search("hidden") !== -1) {
+                        for (q = 0; q < quests.length; q++) {
+                            if (output.search(quests[q].questName) !== -1 && quests[q].questStatus === 1) {
+                                end = output.search("hidden");
+                                output = "<p>" + output.substring(0, end) + "</p>";
+                                info.insertAdjacentHTML("beforeend", output);
+                                n++;
                             }
                             else {}
                         }
                     }
                     else {
+                        output = "<p>" + output + "</p>";
                         info.insertAdjacentHTML("beforeend", output);
                         n++;
                     }
                 }
-                else if (npcs[currentTalk].npcResponse.search(o) != -1 && npcs[currentTalk].npcResponse.search(o + 1) == -1) {
+                else if (npcs[currentTalk].npcResponse.search(o) !== -1 && npcs[currentTalk].npcResponse.search(o + 1) === -1) {
                     let start = npcs[currentTalk].npcResponse.search(o);
                     output = "<p>" + (n) + npcs[currentTalk].npcResponse.substring(start + 1) + "</p>";
                     info.insertAdjacentHTML("beforeend", output);
@@ -343,27 +375,144 @@ function talk() {
         else {}
     }
 }
-
+//The respond function is a mess but works for now, should change later
+//It currently makes sure you can't choose hidden options and then checks if you need money
 function respond() {
     let text = document.getElementById("textField").value;
+    let count = 0;
+    let textSave = 0;
+    for (i = 0; i <= text; i++) {
+        if (text.search(i) !== -1) {
+            textSave = i;
+        }
+        else {}
+    }
+    for (i = 0; i <= text; i++) {
+        text = text.toString();
+        if (text.search(i) !== -1) {
+            text = i;
+        }
+        else{ }
+        if(npcs[currentTalk].npcResponse.search(i) !== -1 && npcs[currentTalk].npcResponse.search(i + 1) !== -1) {
+            let start = npcs[currentTalk].npcResponse.search(i);
+            let end = npcs[currentTalk].npcResponse.search(i + 1);
+            output = npcs[currentTalk].npcResponse.substring(start, end);
+            }
+            else if(npcs[currentTalk].npcResponse.search(i) !== -1 && npcs[currentTalk].npcResponse.search(i + 1) === -1) {
+            let start = npcs[currentTalk].npcResponse.search(i);
+            output = npcs[currentTalk].npcResponse.substring(start);
+            }
+            else {}
+            console.log(output);
+            console.log(text);
+            if (output.search("hidden") !== -1 && output.search("reverse") !== -1) {
+                for (q = 0; q < quests.length; q++) {
+                    if (output.search(quests[q].questName) !== -1 && quests[q].questStatus !== 0) {
+                        count++;
+                        text++;
+                        console.log(text);
+                    }
+                    else { }
+                }
+            }
+            else if (output.search("hidden") !== -1) {
+                for (q = 0; q < quests.length; q++) {
+                    if (output.search(quests[q].questName) !== -1 && quests[q].questStatus !== 1) {
+                        count++;
+                        text++;
+                        console.log(text);
+                    }
+                    else { }
+                }
+            }
+            else {
+            }
+        
+    }
+    text = textSave + count;
+    text = text.toString();
+    console.log(text);
     for (i = 0; i < responses.length; i++) {
-        if (responses[i].responseName.search(npcs[currentTalk].npcDescriptor) != -1 && responses[i].responseName.search(text) != -1) {
-            output = "<p>" + responses[i].responseContent + "</p>";
-            info.insertAdjacentHTML("beforeend", output);
-            inTalk = "false"
-            currentTalk = "none"
+        if (responses[i].responseName.search(npcs[currentTalk].npcDescriptor) !== -1 && responses[i].responseName.search(text) !== -1) {
+            if (responses[i].responseCost === 0) {
+                checkResponse();
+                break;
+            }
+            else if (responses[i].responseCost !== 0 && responses[i].responseCost <= player.gold) {
+                player.gold = player.gold - responses[i].responseCost;
+                output = "<p>You pay the " + responses[i].responseCost + " gold</p>";
+                info.insertAdjacentHTML("beforeend", output);
+                checkResponse();
+                break;
+            }
+            else if (responses[i].responseCost !== 0 && responses[i].responseCost > player.gold) {
+                output = "<p>You don't have enough gold</p>";
+                info.insertAdjacentHTML("beforeend", output);
+                break;
+            }
         }
-        else {
-            inTalk = "false";
-            currentTalk = "none";
-        }
+        else { }
     }
 }
+//checks if any quests are updated by a response and if any items are received, then prints
+//response text
+function checkResponse() {
+    if (responses[i].responseQuestGet === "Main quest") {
+        quests[0].questObjective = responses[i].responseItem;
+        console.log(quests[0].questObjective);
+    }
+    else { }
+    if (responses[i].responseQuestComplete !== "none" && responses[i].responseQuestGet !== "none" && responses[i].responseQuestGet !== "Main quest") {
+        for (o = 0; o < quests.length; o++) {
+            if (responses[i].responseQuestComplete === quests[o].questName && quests[o].questStatus === 1) {
+                quests[o].questStatus = 2;
+            }
+            else if (responses[i].responseQuestGet === quests[o].questName && quests[o].questStatus === 0) {
+                quests[o].questStatus = 1;
+            }
+            else { }
+        }
 
+    }
+    else if (responses[i].responseQuestComplete !== "none" && responses[i].responseQuestGet === "none") {
+        for (o = 0; o < quests.length; o++) {
+            if (responses[i].responseQuestComplete === quests[o].questName) {
+                quests[o].questStatus = 2;
+            }
+            else { }
+        }
+    }
+    else if (responses[i].responseQuestComplete === "none" && responses[i].responseQuestGet !== "none" && responses[i].responseQuestGet !== "Main quest") {
+        for (o = 0; o < quests.length; o++) {
+            if (responses[i].responseQuestGet === quests[o].questName) {
+                quests[o].questStatus = 1;
+            }
+            else { }
+        }
+    }
+    else { }
+    if (responses[i].responseItem !== "none") {
+        for (o = 0; o < items.length; o++) {
+            if (responses[i].responseItem === items[o].itemName && items[o].itemInventory === 0) {
+                items[o].itemInventory = 1;
+                output = "<p>The " + items[o].itemName + " was added to your inventory</p>";
+                info.insertAdjacentHTML("beforeend", output);
+            }
+            else { }
+        }
+    }
+    else { }
+    output = "<p>" + responses[i].responseContent + "</p>";
+    info.insertAdjacentHTML("beforeend", output);
+    printObjective();
+    inTalk = "false";
+    currentTalk = "none";
+}
+//starts a fight and sets inFight to true restricting certain actions
 function fight() {
     let text = document.getElementById("textField").value;
     for (i = 0; i < enemies.length; i++) {
-        if (text.search(enemies[i].enemyName) != -1 && enemies[i].enemyArea === areas[currentArea].areaName) {
+        if (text.search(enemies[i].enemyName) !== -1 && enemies[i].enemyArea === areas[currentArea].areaName) {
             inFight = "true";
             currentEnemy = i;
 
@@ -377,7 +526,8 @@ function fight() {
     }
 }
 
-
+//used during a fight, calculates damage and ends the fight if you or the enemy dies,
+//game over not yet implemented
 function attack() {
 
     let playerHit = (Math.floor(Math.random() * (player.attackHigh - player.attackLow + 1)) + player.attackLow);
@@ -412,11 +562,11 @@ function attack() {
     }
     printStatus();
 }
-
+//picks up an item, checks inventory, currentArea and itemArea to check if item exists
 function take() {
     let text = document.getElementById("textField").value;
     for (i = 0; i < items.length; i++) {
-        if (text.search(items[i].itemName) != -1 && items[i].itemArea === areas[currentArea].areaName) {
+        if (text.search(items[i].itemName) !== -1 && items[i].itemArea === areas[currentArea].areaName) {
             items[i].itemInventory = 1;
 
             output = "<p>You take the " + items[i].itemName + " and add it to your inventory</p>";
@@ -425,12 +575,12 @@ function take() {
         else { }
     }
 }
-
+//equips item from inventory if equippable, changes player values when applicable
 function equip() {
     let text = document.getElementById("textField").value;
     for (i = 0; i < items.length; i++) {
-        if (text.search(items[i].itemName) != -1 && items[i].itemInventory === 1) {
-            if (items[i].itemEquipped === 0 && items.itemType != "unequippable") {
+        if (text.search(items[i].itemName) !== -1 && items[i].itemInventory === 1) {
+            if (items[i].itemEquipped === 0 && items.itemType !== "unequippable") {
                 if (items[i].itemType === "weapon") {
                     if (player.weaponEquipped !== "none") {
                         for (o = 0; o < items.length; o++) {
@@ -490,7 +640,7 @@ function equip() {
     }
     printStatus();
 }
-
+//prints player status when changes occur
 function printStatus() {
     let playerStatus = document.getElementById("playerStatus");
     while (playerStatus.hasChildNodes()) {
@@ -500,12 +650,13 @@ function printStatus() {
              "<p>Attack: " + player.attackLow + " - " + player.attackHigh + "</p>" +
              "<p>Defence: " + player.defense + "</p>" +
              "<p>Weapon: " + player.weaponEquipped + "</p>" +
-             "<p>Armor: " + player.armorEquipped + "</p>";
+             "<p>Armor: " + player.armorEquipped + "</p>" +
+             "<p>Gold: " + player.gold + "</p>";
 
     playerStatus.insertAdjacentHTML("beforeend", output);
 
 }
-
+//prints quests currently active
 function printObjective() {
     let objectives = document.getElementById("objectives");
     while (objectives.hasChildNodes()) {
@@ -523,7 +674,8 @@ function printObjective() {
         else { }
     }
 }
-
+//Based on player input runs various functions, decides what actions are possible based 
+//on inFight and inTalk variables
 document.getElementById("actionButton").addEventListener("click", () => {
     let text = document.getElementById("textField").value;
     if (inFight === "true") {
@@ -532,10 +684,10 @@ document.getElementById("actionButton").addEventListener("click", () => {
                 attack();
                 break;
             case (text === "i"):
-
+                //inventory use in battle(not yet implemented)
                 break;
             case (text === "r"):
-
+                //used to run away from a fight(not yet implemented)
                 break;
         }
     }
@@ -568,5 +720,6 @@ document.getElementById("actionButton").addEventListener("click", () => {
                 break;
         }
     }
+    info.scrollBy(0, 500);
 })
 
